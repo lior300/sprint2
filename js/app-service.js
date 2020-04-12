@@ -15,7 +15,9 @@ var gImgMeme;
 function createMeme(imgIdx) {
     gMeme = {}
 
+
     gMeme.selectedImgId = (imgIdx === -1) ? -1 : gImgs[imgIdx].id
+    if (imgIdx === -1) gMeme.url = gImgMeme.src
     gMeme.selectedLineIdx = imgIdx
 
     gMeme.lines = []
@@ -130,7 +132,6 @@ function downloadMeme(elLink) {
 
 function setImgMeme(img) {
     gImgMeme = img
-    saveToStorage(keyImgMeme, gImgMeme)
 }
 function getImgMeme() {
     return gImgMeme
@@ -138,15 +139,15 @@ function getImgMeme() {
 
 function createImgObj(imgIdx) {
     if (imgIdx === -1) {
-        loadImgMemeFromStorage()
+        var img = gMeme.url
     } else {
         var imgs = getImgs()
         var img = imgs[imgIdx]
-
-        var imgObj = new Image()
-        imgObj.src = img.url
-        setImgMeme(imgObj)
     }
+
+    var imgObj = new Image()
+    imgObj.src = img.url
+    setImgMeme(imgObj)
 }
 
 function setCanvasSizeByImg(imgObj) {
@@ -161,7 +162,7 @@ function saveMemeToStorage() {
     saveToStorage(keyMeme, gMeme)
 }
 function saveImgMemeToStorage() {
-    saveToStorage(keyImgMeme, gImgMeme)
+    saveToStorage(keyImgMeme, gImgMeme.src)
 }
 
 function loadMemeFromStorage() {

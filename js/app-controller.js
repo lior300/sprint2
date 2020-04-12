@@ -34,10 +34,8 @@ function setCanvasSize(width, height) {
 function renderCanvas() {
     var meme = getMeme()
     var imgObj = getImgMeme()
-    if (!imgObj) {
-        createImgObj(meme.selectedLineIdx)
-        imgObj = getImgMeme()
-    }
+    console.log(imgObj);
+
     gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
     if (!gIsDownload) renderLineMarker()
     meme.lines.forEach(renderLineCanvas)
@@ -196,9 +194,8 @@ function onSelectImg(ev) {
 }
 function loadSelectedImg(img) {
     setImgMeme(img)
-    saveImgMemeToStorage()
-    setCanvasSizeByImg(img)
     createMeme(-1)
+    setCanvasSizeByImg(img)
     unDisableBtn(".btn-gallery")
     disableBtn('.btn-memes')
     changeScreen()

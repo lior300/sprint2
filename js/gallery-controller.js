@@ -1,8 +1,7 @@
 'use strict'
 
 
-function renderGallery() {
-    var imgs = getImgs()
+function renderGallery(imgs = getImgs()) {
     var imgsHTMLs = imgs.map(getImgsHTMLs)
 
     var elGallery = document.querySelector('.gallery');
@@ -18,10 +17,19 @@ function getImgsHTMLs(img, idx) {
 
 /**  Image-gallery handler */
 function onImgGallery(imgIdx) {
+    createImgObj(imgIdx)
+    setCanvasSizeByImg(getImgMeme())
     createMeme(imgIdx)
     unDisableBtn(".btn-gallery")
     disableBtn('.btn-memes')
     changeScreen()
     renderCanvas()
-    renderLinesDOM()
+    renderLine()
 }
+
+function onSearchInput(input) {
+    if (!input) renderGallery()
+    var imgsForRender = getImgsToRenderByKeyword(input)
+    renderGallery(imgsForRender)
+}
+

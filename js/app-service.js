@@ -1,29 +1,27 @@
 'use strict'
-/* MODAL */
-var gKeywords = { 'happy': 12, 'funny puk': 1 }
 
-
-var gCountImg = 18;
-var gMeme;
-
+const keyMeme = 'meme'
+const keyImgMeme = 'imgMeme'
+const keyImgSrc = 'imgSrc'
 /* line-text meme*/
 var gLineClicked;//The last line clicked
 var gLineClickedIdx;
 
-
+/* MODAL */
+var gMeme = loadMemeFromStorage();
+var gImgMeme;
 
 /**Create new meme */
 function createMeme(imgIdx) {
-    var canvasSize = getCanvasSize()
     gMeme = {}
 
-    gMeme.selectedImgId = gImgs[imgIdx].id
+    gMeme.selectedImgId = (imgIdx === -1) ? -1 : gImgs[imgIdx].id
     gMeme.selectedLineIdx = imgIdx
-
 
     gMeme.lines = []
 
     var canvasSize = getCanvasSize() //Get width and hight of the canvas
+
     //Set line position coordinates
     var linePos = {
         x: canvasSize.width / 2,
@@ -36,8 +34,7 @@ function createMeme(imgIdx) {
         x: canvasSize.width / 2,
         y: canvasSize.height - 10
     }
-    addLine(canvasSize.width / 2, canvasSize.height - 10)
-
+    addLine(linePos.x, linePos.y)
     setLineClicked(0)
 }
 
@@ -66,9 +63,7 @@ function addLine(xPos, yPos) {
 function deleteLine(idxLine) {
     var linesMeme = getLines()
     linesMeme.splice(idxLine, 1)
-    if (idxLine === gLineClickedIdx) changeLineClicked()
     changeLineClicked()
-
 }
 function changeLineProperty(keyProp, value) {
     if (keyProp === 'pos') {
@@ -85,21 +80,18 @@ function changeLineProperty(keyProp, value) {
     }//END ELSE
 }//END FUNCTION 'changeLineProperty'
 function changeLineClicked() {
-    if (!gLineClicked) return
-    var idxLine;
     var lines = getLines()
-
+    var idxLine;
     if (!lines.length) {
         idxLine = null
     } else {
-        idxLine = gLineClickedIdx + 1
-        if (idxLine === lines.length) idxLine = 0
+        idxLine = (idxLine === null) ? 0 : gLineClickedIdx + 1
+        if (idxLine >= lines.length) idxLine = 0
     }
     setLineClicked(idxLine)
 }
 function setLineClicked(idxLine) {
     gLineClickedIdx = idxLine
-
     //Must to do (idxLine === null) because idxLine can also be equal to 0 (i went gLineClicked=null only if there is no index )
     gLineClicked = (idxLine === null) ? null : gMeme.lines[idxLine]
 }
@@ -129,3 +121,63 @@ function getItemByIdx(idx, arry) {
     return arry[idx]
 }
 
+function downloadMeme(elLink) {
+    const data = gCanvas.toDataURL()
+    elLink.href = data
+    elLink.download = 'my-meme.png'
+}
+
+
+function setImgMeme(img) {
+    gImgMeme = img
+    saveToStorage(keyImgMeme, gImgMeme)
+}
+function getImgMeme() {
+    return gImgMeme
+}
+
+function createImgObj(imgIdx) {
+    if (imgIdx === -1) {
+        loadImgMemeFromStorage()
+    } else {
+        var imgs = getImgs()
+        var img = imgs[imgIdx]
+
+        var imgObj = new Image()
+        imgObj.src = img.url
+        setImgMeme(imgObj)
+    }
+}
+
+function setCanvasSizeByImg(imgObj) {
+    var canvasSize = getCanvasSize()
+    var ratio = imgObj.height / imgObj.width
+    //Determines the height of the canvas according to the aspect ratio of the image
+    var heightCanvas = imgObj.height + (canvasSize.width - imgObj.width) * ratio;
+    setCanvasSize(canvasSize.width, heightCanvas)
+}
+
+function saveMemeToStorage() {
+    saveToStorage(keyMeme, gMeme)
+}
+function saveImgMemeToStorage() {
+    saveToStorage(keyImgMeme, gImgMeme)
+}
+
+function loadMemeFromStorage() {
+    var meme = loadFromStorage(keyMeme)
+    if (!meme) return null
+    gMeme = meme
+    setLineClicked(0)
+    return meme
+}
+
+function loadImgMemeFromStorage() {
+    gImgMeme = loadFromStorage(keyImgMeme)
+    return getImgMeme
+}
+
+function save() {
+    saveMemeToStorage()
+    saveImgMemeToStorage()
+}

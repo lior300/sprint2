@@ -3,14 +3,18 @@
 /* CANVAS */
 var gCanvas;
 var gCtx;
+var gIsDownload
 
 
 
 function init() {
-    console.log('Appd woring');
-
     InitializeCanvas()
     renderGallery()
+    gIsDownload = false
+    var meme = getMeme()
+    if (meme) {
+        unDisableBtn('.btn-memes')
+    }
 }
 
 
@@ -19,25 +23,26 @@ function init() {
 function InitializeCanvas() {
     gCanvas = document.querySelector('#my-canvas');
     gCtx = gCanvas.getContext('2d')
+    setCanvasSize(700, 700)
 
-    gCtx.canvas.width = 500;
-    gCtx.canvas.height = 500;
+}
+function setCanvasSize(width, height) {
+    gCtx.canvas.width = width;
+    gCtx.canvas.height = height;
 }
 /**Canvas render */
 function renderCanvas() {
     var meme = getMeme()
-    var imgMeme = getItemByIdx(meme.selectedLineIdx, getImgs())
-
-    var imgObj = new Image()
-    imgObj.src = imgMeme.url
-
-    imgObj.onload = () => {
-        gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
-        renderLineMarker()
-        gMeme.lines.forEach(renderLineCanvas)
+    var imgObj = getImgMeme()
+    if (!imgObj) {
+        createImgObj(meme.selectedLineIdx)
+        imgObj = getImgMeme()
     }
-
+    gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
+    if (!gIsDownload) renderLineMarker()
+    meme.lines.forEach(renderLineCanvas)
 }
+
 /**Helpers for 'renderCanvas()' function */
 function renderLineCanvas(line) {
     // Render canvas 
@@ -56,11 +61,20 @@ function renderLineMarker() {
     gCtx.fillRect(0, line.pos.y - line.size + 2, gCanvas.width, line.size + 10);
 }
 
-/** Render DOM - lines */
+
+function renderLine() {
+    var line = getLineClicked()
+    var lineIdx = getLineClickedIdx()
+
+    var lineHTML = line ? getHTMLLineDOM(line, lineIdx) : `Click '+' button to add text`;
+    document.querySelector('.line').innerHTML = lineHTML
+}
+
+/** Render DOM - line */
 function renderLinesDOM() {
     var lines = getLines()
     var strHTMLs = lines.map(getHTMLLineDOM)
-    document.querySelector('.lines').innerHTML = strHTMLs.join('');
+    document.querySelector('.line').innerHTML = strHTMLs.join('');
 }
 /** helpers for on renderLinesDOM**/
 function getHTMLLineDOM(line, idx) {
@@ -78,6 +92,10 @@ function onMemes() {
     changeScreen()
     disableBtn('.btn-memes')
     unDisableBtn('.btn-gallery')
+    createImgObj(getMeme().selectedLineIdx)
+    setCanvasSizeByImg(getImgMeme())
+    renderCanvas()
+    renderLine()
 }
 function onGallery() {
     changeScreen()
@@ -105,12 +123,14 @@ function onLine(idxLine) {
 }
 function onAddLine() {
     addLine()
-    renderLinesDOM()
+    setLineClicked(getLines().length - 1)
+    renderLine()
     renderCanvas()
+    document.querySelector('.line textarea').focus();
 }
 function onDeleteLine(idxLine) {
     deleteLine(idxLine)
-    renderLinesDOM()
+    renderLine()
     renderCanvas()
 }
 function onChange() {
@@ -119,11 +139,14 @@ function onChange() {
     changeLineClicked()
     var idxLine = getLineClickedIdx()
     var elLine = document.querySelector(`.line-${idxLine}`);
-    elLine.querySelector('textarea').focus()
+    renderLine()
     renderCanvas()
 }
 
-
+function onPropertyTouch(keyProp, value, ev) {
+    ev.preventDefault()
+    onLineProperty(keyProp, value)
+}
 function onLineProperty(keyProp, value) {
     if (!getLineClicked()) return
 
@@ -147,6 +170,48 @@ function onPickerColor(picker) {
     onLineProperty('color', '#' + picker)
 }
 
+
+function onDownload(elLink) {
+    gIsDownload = true
+    renderCanvas()
+    downloadMeme(elLink)
+    gIsDownload = false
+    renderCanvas()
+}
+
+function onFacebookShare() {
+
+}
+
+function onSave() {
+    save()
+}
 function showMenu() {
     document.body.classList.toggle('show-menu');
+}
+
+
+function onSelectImg(ev) {
+    loadImageFromInput(ev, loadSelectedImg)
+}
+function loadSelectedImg(img) {
+    setImgMeme(img)
+    saveImgMemeToStorage()
+    setCanvasSizeByImg(img)
+    createMeme(-1)
+    unDisableBtn(".btn-gallery")
+    disableBtn('.btn-memes')
+    changeScreen()
+    renderCanvas()
+    renderLine()
+}
+function loadImageFromInput(ev, onImageReady) {
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        var img = new Image();
+        img.onload = onImageReady.bind(null, img)
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(ev.target.files[0]);
 }

@@ -10,12 +10,14 @@
 </head>
 
 <body onload="init()">
-    <section class="screen" onclick="showMenu()"></section>
+    <section class="screen" onclick="showMenu()" ontouchstart="showMenu()"></section>
 
     <section class="container">
         <header class="header-main">
-            <section class="logo">MeMeGeN</section>
-            <button class="btn-menu icon-background" onclick="showMenu()"></button>
+            <section class="logo">
+                <img src="img/LOGO.png" alt="MemeGen-logo">
+            </section>
+            <button class="btn-menu icon-background" onclick="showMenu()" ontouchstart="showMenu()"></button>
             <!-- NAvBAR -->
             <section class="nav">
                 <button class="nav-btn btn-gallery" disabled onclick="onGallery()">Gallery</button>
@@ -26,11 +28,18 @@
         <main>
             <!-- Search-Container -->
             <section class="container-gallery">
-                <h2>Search</h2>
-                <section>
-                    <input type=" text" class="search box" />
+                <section class="panel-row search-container">
+                    <input type=" text" class="search-box" placeholder="Enter search keyword"
+                        oninput="onSearchInput(this.value)" />
+                    <div class="search-ico icon-background"></div>
                 </section>
                 <!-- Gallery -->
+                <div>
+                    <input type="file" class="select-file" style="display: none;" onchange="onSelectImg(event)"
+                        accept="image/png, image/jpeg" />
+                    <input type="button" value="Upload image"
+                        onclick="document.querySelector('.select-file').click();" />
+                </div>
                 <section class="gallery">
                 </section>
 
@@ -41,40 +50,44 @@
 
                 <!-- Canvas -->
                 <section class="canvas-container">
-                    <canvas id="my-canvas" style="border: 1px solid black;"></canvas>
+                    <canvas class="canvas" id="my-canvas" style="border: 1px solid black;"></canvas>
                 </section>
 
                 <section class="panel">
                     <!-- Lines -->
-                    <div class="panel-row lines-container">
-                        <div class="lines"></div>
+                    <div class="panel-row line-container">
+                        <div class="line"></div>
                     </div>
                     <div class="panel-row btns-line">
                         <!-- Add-row -->
-                        <button class="btn-add-line btn-panel icon-background" onclick="onAddLine()">+</button>
+                        <button class="btn-add-line btn-panel icon-background" onclick="onAddLine()"
+                            ontouchstart="onAddLine()"></button>
                         <!-- change line -->
                         <button class="btn-change-line btn-panel icon-background" onclick="onChange()"></button>
 
                         <!-- up-down line -->
-                        <button class="btn-up-line btn-panel icon-background"
-                            onclick="onLineProperty('pos', -1)"></button>
-                        <button class="btn-down-line btn-panel icon-background"
-                            onclick="onLineProperty('pos', +1)"></button>
+                        <button class="btn-up-line btn-panel icon-background" onclick="onLineProperty('pos', -1)"
+                            ontouchstart="onPropertyTouch('pos', -1, event)"></button>
+                        <button class="btn-down-line btn-panel icon-background" onclick="onLineProperty('pos', +1)"
+                            ontouchstart="onPropertyTouch('pos', +1, event)"></button>
                     </div>
                     <!-- Edit text -->
                     <div class="panel-row">
                         <!-- Size-text -->
-                        <button class="btn-increase-font btn-panel icon-background"
-                            onclick="onLineProperty('size', 1)"></button>
-                        <button class="btn-reduce-font btn-panel icon-background"
-                            onclick="onLineProperty('size', -1)"></button>
+                        <button class="btn-increase-font btn-panel icon-background" onclick="onLineProperty('size', 1)"
+                            ontouchstart="onPropertyTouch('size', 1, event)"></button>
+                        <button class="btn-reduce-font btn-panel icon-background" onclick="onLineProperty('size', -1)"
+                            ontouchstart="onPropertyTouch('size', -1, event)"></button>
                         <!-- Algin -->
                         <button class="btn-align-left btn-panel icon-background"
-                            onclick="onLineProperty('align', 'left')"></button>
+                            onclick="onLineProperty('align', 'right')"
+                            ontouchstart="onPropertyTouch('align', 'right', event)"></button>
                         <button class="btn-align-center btn-panel icon-background"
-                            onclick="onLineProperty('align', 'center')"></button>
+                            onclick="onLineProperty('align', 'center')"
+                            ontouchstart="onPropertyTouch('align', 'center', event)"></button>
                         <button class="btn-align-right btn-panel icon-background"
-                            onclick="onLineProperty('align', 'right')"></button>
+                            onclick="onLineProperty('align', 'left')"
+                            ontouchstart="onPropertyTouch('align', 'left', event)"></button>
                     </div>
                     <div class="panel-row">
                         <!-- Fonts-selected -->
@@ -95,6 +108,10 @@
                             C
                         </button>
                     </div>
+                    <div class="panel-row">
+                        <a class="download" onclick="onDownload(this)" download="" href="#">Download</a>
+                        <button class="btn-save" onclick="onSave()">Save</button>
+                    </div>
                 </section>
 
 
@@ -102,11 +119,13 @@
         </main>
     </section>
 
-
+    <script src="lib/hammerjs/hammerjs.js"></script>
     <script src="lib/jscolor-picker/jscolor.js"></script>
+    <script src="js/upload-service.js"></script>
+    <script src="js/storage-service.js"></script>
+    <script src="js/util.js"></script>
     <script src="js/gallery-service.js"></script>
     <script src="js/gallery-controller.js"></script>
-    <script src="js/util.js"></script>
     <script src="js/app-service.js"></script>
     <script src="js/app-controller.js"></script>
 </body>

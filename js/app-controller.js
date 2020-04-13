@@ -13,6 +13,12 @@ const BTN_GALLERY = '.btn-gallery'
 const BTN_CREATOR = '.btn-creator'
 const BTN_MEMES = '.btn-memes'
 
+var gIsMouseDown;
+var gRowIdxMouseOn;
+var gIsMouseOnTxt
+var gMouseDownPos;
+
+
 function init() {
     InitializeCanvas()
     renderGallery()
@@ -193,6 +199,7 @@ function onChange() {
     changeLineClicked()
     renderLine()
     renderCanvas()
+    document.querySelector('.txt-line').focus();
 }
 
 function onPropertyTouch(keyProp, value, ev) {
@@ -256,7 +263,6 @@ function showMenu() {
     document.body.classList.toggle('show-menu');
 }
 
-
 function onDownload(elLink) {
     gIsDownload = true
     renderCanvas()
@@ -265,16 +271,7 @@ function onDownload(elLink) {
     renderCanvas()
 }
 
-function onFacebookShare() {
 
-}
-
-
-
-var gIsMouseDown;
-var gRowIdxMouseOn;
-var gIsMouseOnTxt
-var gMouseDownPos;
 function onCanvasMove(ev) {
 
     if (gIsMouseDown && gIsMouseOnTxt) {
@@ -284,6 +281,7 @@ function onCanvasMove(ev) {
         line.pos.y += currPos.offsetY - line.pos.y
         alignCenterLinePos(line)
         renderCanvas()
+        document.querySelector('.txt-line').focus();
     } else {
         var lines = getLines()
         var isMouseOnTxt = lines.some((line, idx) => {
@@ -318,4 +316,3 @@ function onCanvasDown(ev) {
         gMouseDownPos = ev
     }
 }
-

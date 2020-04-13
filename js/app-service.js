@@ -130,7 +130,6 @@ function changeLineProperty(keyProp, value) {
             var deff = 5
             value = gLineClicked.size + (deff * value)
         }
-
         gLineClicked[keyProp] = value
     }//END ELSE
 }//END FUNCTION 'changeLineProperty'

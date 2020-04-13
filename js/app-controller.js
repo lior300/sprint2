@@ -40,6 +40,7 @@ function setCanvasSize(width, height) {
 function renderCanvas() {
     var meme = getMeme()
     var imgObj = getImgMeme()
+    console.log(imgObj);
 
     gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
     if (!gIsDownload) renderLineMarker()
@@ -97,7 +98,7 @@ function onCreator() {
     unDisableBtn(BTN_GALLERY)
     unDisableBtn(BTN_MEMES)
 
-    createImgObj(getMeme().selectedLineIdx)
+    createImgObj(getMeme().selectedImgId)
     setCanvasSizeByImg(getImgMeme())
     renderCanvas()
     renderLine()
@@ -126,7 +127,7 @@ function getMemesHTMLs(memeObj, idx) {
     return `
         <div class="meme-gallery-box">
             <img class="img-meme" src="${img}" onclick="onMemeBox(${idx})" />
-            <button class="btn-meme-delete" onclick="onDeleteMeme()"></button>
+            <button class="btn-meme-delete" onclick="onDeleteMeme(${idx})"></button>
         </div>
     `
 }
@@ -135,13 +136,18 @@ function onMemeBox(idx) {
     var meme = memes[idx].gMeme
     setMeme(meme)
     createImgObj(meme.selectedImgId)
-    setCanvasSizeByImg(getImgMeme())
-    setLineClicked(0)
-    renderCanvas()
-    unDisableBtn(BTN_MEMES)
-    changeScreen(CREATOR)
+    getImgMeme().onload = () => {
+        setCanvasSizeByImg(getImgMeme())
+        setLineClicked(0)
+        renderCanvas()
+        unDisableBtn(BTN_MEMES)
+        changeScreen(CREATOR)
+    }
 }
-
+function onDeleteMeme() {
+    deleteMeme()
+    renderMemes(getMemes())
+}
 
 function changeScreen(screenShow) {
     var screens = [GALLERY, CREATOR, MEMES]
@@ -181,8 +187,6 @@ function onChange() {
     if (!getLineClicked()) return
 
     changeLineClicked()
-    var idxLine = getLineClickedIdx()
-    var elLine = document.querySelector(`.line-${idxLine}`);
     renderLine()
     renderCanvas()
 }

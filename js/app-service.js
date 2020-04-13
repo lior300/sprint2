@@ -14,14 +14,14 @@ var gMeme = loadMemeFromStorage();
 var gImgMeme;
 
 /**Create new meme */
-function createMeme(imgIdx) {
+function createMeme(imgId) {
     gMeme = {}
 
-    gMeme.selectedImgId = (imgIdx === -1) ? -1 : gImgs[imgIdx].id
-    if (imgIdx === -1) gMeme.url = gImgMeme.src
-    else gMeme.url = gImgs[imgIdx].url
-    // gMeme.selectedLineIdx = (imgIdx === -1) ? -1 : imgIdx
-    // // gMeme.selectedImgIdx = (imgIdx === -1) ? -1 : imgIdx
+    gMeme.selectedImgId = imgId
+    if (imgId === -1) {
+        gMeme.url = gImgMeme.src
+    } else gMeme.url = gImgs[imgId].url
+
     gMeme.lines = []
 
     var canvasSize = getCanvasSize() //Get width and hight of the canvas
@@ -164,6 +164,11 @@ function getMemes() {
     return []
 }
 
+function deleteMeme(idx) {
+    var memes = loadMemesFromStorage()
+    memes.splice(idx, 1)
+    saveMemesToStorage(memes)
+}
 
 
 function downloadMeme(elLink) {

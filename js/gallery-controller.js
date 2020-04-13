@@ -16,10 +16,10 @@ function getImgsHTMLs(img) {
 }
 
 /**  Image-gallery handler */
-function onImgGallery(imgIdx) {
-    createImgObj(imgIdx)
+function onImgGallery(imgId) {
+    createImgObj(imgId)
     setCanvasSizeByImg(getImgMeme())
-    createMeme(imgIdx)
+    createMeme(imgId)
     unDisableBtn(BTN_GALLERY)
     disableBtn(BTN_CREATOR)
     changeScreen(CREATOR)

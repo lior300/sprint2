@@ -13,13 +13,13 @@ var gImgs = [
     { id: 9, url: 'img/meme-imgs-full-size/9.jpg', keywords: ['happy', 'baby', 'laughs', 'evil'] },
     { id: 10, url: 'img/meme-imgs-full-size/10.jpg', keywords: ['movie', 'men'] },
     { id: 11, url: 'img/meme-imgs-full-size/11.jpg', keywords: ['movie', 'evil'] },
-    { id: 12, url: 'img/meme-imgs-full-size/12.jpg', keywords: ['movie','chaim hecht'] },
+    { id: 12, url: 'img/meme-imgs-full-size/12.jpg', keywords: ['movie', 'chaim hecht'] },
     { id: 13, url: 'img/meme-imgs-full-size/13.jpg', keywords: ['kids', 'dance', 'happy', , 'friends'] },
     { id: 14, url: 'img/meme-imgs-full-size/14.jpg', keywords: ['president', 'donald trump', 'men'] },
     { id: 15, url: 'img/meme-imgs-full-size/15.jpg', keywords: ['baby,cute'] },
     { id: 16, url: 'img/meme-imgs-full-size/16.jpg', keywords: ['animals', 'dog'] },
-    { id: 18, url: 'img/meme-imgs-full-size/17.jpg', keywords: ['smile', 'bark obama', 'laughs', 'happy' ] },
-    { id: 19, url: 'img/meme-imgs-full-size/18.jpg', keywords: ['kiss', 'men', 'man', 'friends' ] },
+    { id: 18, url: 'img/meme-imgs-full-size/17.jpg', keywords: ['smile', 'bark obama', 'laughs', 'happy'] },
+    { id: 19, url: 'img/meme-imgs-full-size/18.jpg', keywords: ['kiss', 'men', 'man', 'friends'] },
 ]
 
 
@@ -36,4 +36,11 @@ function getImgsToRenderByKeyword(keyword) {
     })
 }
 
-
+function getImgIdxById(imgId) {
+    if (imgId === -1) return -1
+    return gImgs.findIndex(img => img.id === imgId)
+}
+function getImgById(imgId) {
+    if (imgId === -1) return getImgMeme()
+    return gImgs.find(img => img.id === imgId)
+}

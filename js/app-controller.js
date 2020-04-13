@@ -5,7 +5,13 @@ var gCanvas;
 var gCtx;
 var gIsDownload
 
+const GALLERY = '.container-gallery'
+const CREATOR = '.meme-creator'
+const MEMES = '.memes'
 
+const BTN_GALLERY = '.btn-gallery'
+const BTN_CREATOR = '.btn-creator'
+const BTN_MEMES = '.btn-memes'
 
 function init() {
     InitializeCanvas()
@@ -13,7 +19,7 @@ function init() {
     gIsDownload = false
     var meme = getMeme()
     if (meme) {
-        unDisableBtn('.btn-memes')
+        unDisableBtn('.btn-creator')
     }
 }
 
@@ -34,7 +40,6 @@ function setCanvasSize(width, height) {
 function renderCanvas() {
     var meme = getMeme()
     var imgObj = getImgMeme()
-    console.log(imgObj);
 
     gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
     if (!gIsDownload) renderLineMarker()
@@ -86,25 +91,67 @@ function getHTMLLineDOM(line, idx) {
 
 
 /* header handles */
-function onMemes() {
-    changeScreen()
-    disableBtn('.btn-memes')
-    unDisableBtn('.btn-gallery')
+function onCreator() {
+    changeScreen(CREATOR)
+    disableBtn(BTN_CREATOR)
+    unDisableBtn(BTN_GALLERY)
+    unDisableBtn(BTN_MEMES)
+
     createImgObj(getMeme().selectedLineIdx)
     setCanvasSizeByImg(getImgMeme())
     renderCanvas()
     renderLine()
 }
 function onGallery() {
-    changeScreen()
-    disableBtn('.btn-gallery')
-    unDisableBtn('.btn-memes')
+    changeScreen(GALLERY)
+    disableBtn(BTN_GALLERY)
+    if (getMeme()) unDisableBtn(BTN_CREATOR)
+    unDisableBtn(BTN_MEMES)
+}
+function onMemes() {
+    var memes = getMemes()
+    renderMemes(memes)
+    disableBtn(BTN_MEMES)
+    if (getMeme()) unDisableBtn(BTN_CREATOR)
+    unDisableBtn(BTN_GALLERY)
+    changeScreen(MEMES)
+}
+
+function renderMemes(memes) {
+    var elGalleryMemes = document.querySelector('.memes-gallery')
+    elGalleryMemes.innerHTML = (memes.length) ? memes.map(getMemesHTMLs).join('') : 'You don\'t have any saved memes yet'
+}
+function getMemesHTMLs(memeObj, idx) {
+    var img = memeObj.img
+    return `
+        <div class="meme-gallery-box">
+            <img class="img-meme" src="${img}" onclick="onMemeBox(${idx})" />
+            <button class="btn-meme-delete" onclick="onDeleteMeme()"></button>
+        </div>
+    `
+}
+function onMemeBox(idx) {
+    var memes = loadMemesFromStorage()
+    var meme = memes[idx].gMeme
+    setMeme(meme)
+    createImgObj(meme.selectedImgId)
+    setCanvasSizeByImg(getImgMeme())
+    setLineClicked(0)
+    renderCanvas()
+    unDisableBtn(BTN_MEMES)
+    changeScreen(CREATOR)
 }
 
 
-function changeScreen() {
-    document.querySelector('.container-gallery').classList.toggle('hidden')
-    document.querySelector('.meme-creator').classList.toggle('hidden')
+function changeScreen(screenShow) {
+    var screens = [GALLERY, CREATOR, MEMES]
+    screens.forEach(screen => {
+        if (screen === screenShow) {
+            document.querySelector(screen).classList.remove('hidden')
+        } else {
+            document.querySelector(screen).classList.add('hidden')
+        }
+    })
 }
 function disableBtn(selector) {
     document.querySelector(selector).disabled = true
@@ -114,7 +161,6 @@ function unDisableBtn(selector) {
 }
 
 
-/** line meme handles */
 function onLine(idxLine) {
     setLineClicked(idxLine)
     renderCanvas()
@@ -151,6 +197,12 @@ function onLineProperty(keyProp, value) {
     changeLineProperty(keyProp, value)
     renderCanvas()
 }
+function onStrokePickerColor(picker) {
+    onLineProperty('stroke', '#' + picker)
+}
+function onPickerColor(picker) {
+    onLineProperty('color', '#' + picker)
+}
 
 function getCanvasSize() {
     return {
@@ -160,12 +212,40 @@ function getCanvasSize() {
 }
 
 
-function onStrokePickerColor(picker) {
-    console.log(picker);
-    onLineProperty('stroke', '#' + picker)
+function onSave(el) {
+    gIsDownload = true
+    renderCanvas()
+    save(el)
+    gIsDownload = false
+    renderCanvas()
 }
-function onPickerColor(picker) {
-    onLineProperty('color', '#' + picker)
+
+function onSelectImg(ev) {
+    loadImageFromInput(ev, loadSelectedImg)
+}
+function loadSelectedImg(img) {
+    setImgMeme(img)
+    createMeme(-1)
+    setCanvasSizeByImg(img)
+    unDisableBtn(BTN_GALLERY)
+    disableBtn(BTN_CREATOR)
+    changeScreen(CREATOR)
+    renderCanvas()
+    renderLine()
+}
+function loadImageFromInput(ev, onImageReady) {
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        var img = new Image();
+        img.onload = onImageReady.bind(null, img)
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(ev.target.files[0]);
+}
+
+function showMenu() {
+    document.body.classList.toggle('show-menu');
 }
 
 
@@ -179,36 +259,4 @@ function onDownload(elLink) {
 
 function onFacebookShare() {
 
-}
-
-function onSave() {
-    save()
-}
-function showMenu() {
-    document.body.classList.toggle('show-menu');
-}
-
-
-function onSelectImg(ev) {
-    loadImageFromInput(ev, loadSelectedImg)
-}
-function loadSelectedImg(img) {
-    setImgMeme(img)
-    createMeme(-1)
-    setCanvasSizeByImg(img)
-    unDisableBtn(".btn-gallery")
-    disableBtn('.btn-memes')
-    changeScreen()
-    renderCanvas()
-    renderLine()
-}
-function loadImageFromInput(ev, onImageReady) {
-    var reader = new FileReader();
-
-    reader.onload = function (event) {
-        var img = new Image();
-        img.onload = onImageReady.bind(null, img)
-        img.src = event.target.result;
-    }
-    reader.readAsDataURL(ev.target.files[0]);
 }

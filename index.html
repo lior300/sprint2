@@ -20,8 +20,9 @@
             <button class="btn-menu icon-background" onclick="showMenu()" ontouchstart="showMenu()"></button>
             <!-- NAvBAR -->
             <section class="nav">
+                <button class="nav-btn btn-creator" disabled onclick="onCreator()">Creator</button>
                 <button class="nav-btn btn-gallery" disabled onclick="onGallery()">Gallery</button>
-                <button class="nav-btn  btn-memes" disabled onclick="onMemes()">Memes</button>
+                <button class="nav-btn  btn-memes" onclick="onMemes()">Memes</button>
                 <button class="nav-btn btn-about">About</button>
             </section>
         </header>
@@ -110,12 +111,16 @@
                     </div>
                     <div class="panel-row">
                         <a class="download" onclick="onDownload(this)" download="" href="#">Download</a>
-                        <button class="btn-save" onclick="onSave()">Save</button>
+                        <a class="btn-save" onclick="onSave(this)" href="#">Save</a>
                     </div>
                 </section>
-
-
             </section>
+
+            <!-- Meme Gallery -->
+            <section class="memes hidden">
+                <section class="gallery memes-gallery"></section>
+            </section>
+
         </main>
     </section>
 

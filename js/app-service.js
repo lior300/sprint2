@@ -1,8 +1,10 @@
 'use strict'
 
 const keyMeme = 'meme'
-const keyImgMeme = 'imgMeme'
+const KEY_MEMES = 'memes'
 const keyImgSrc = 'imgSrc'
+
+
 /* line-text meme*/
 var gLineClicked;//The last line clicked
 var gLineClickedIdx;
@@ -15,11 +17,11 @@ var gImgMeme;
 function createMeme(imgIdx) {
     gMeme = {}
 
-
     gMeme.selectedImgId = (imgIdx === -1) ? -1 : gImgs[imgIdx].id
     if (imgIdx === -1) gMeme.url = gImgMeme.src
-    gMeme.selectedLineIdx = imgIdx
-
+    else gMeme.url = gImgs[imgIdx].url
+    // gMeme.selectedLineIdx = (imgIdx === -1) ? -1 : imgIdx
+    // // gMeme.selectedImgIdx = (imgIdx === -1) ? -1 : imgIdx
     gMeme.lines = []
 
     var canvasSize = getCanvasSize() //Get width and hight of the canvas
@@ -40,7 +42,36 @@ function createMeme(imgIdx) {
     setLineClicked(0)
 }
 
-/*** gMeme functions ***/
+function getMeme() {
+    return gMeme
+}
+
+function setMeme(meme) {
+    gMeme = meme
+}
+
+
+function setImgMeme(img) {
+    gImgMeme = img
+}
+
+function getImgMeme() {
+    return gImgMeme
+}
+
+function saveMemeToStorage() {
+    saveToStorage(keyMeme, gMeme)
+}
+
+function loadMemeFromStorage() {
+    var meme = loadFromStorage(keyMeme)
+    if (!meme) return null
+    gMeme = meme
+    setLineClicked(0)
+    return meme
+}
+
+
 function addLine(xPos, yPos) {
     var canvasSize = getCanvasSize()
 
@@ -67,6 +98,7 @@ function deleteLine(idxLine) {
     linesMeme.splice(idxLine, 1)
     changeLineClicked()
 }
+
 function changeLineProperty(keyProp, value) {
     if (keyProp === 'pos') {
         var deff = 5
@@ -81,6 +113,7 @@ function changeLineProperty(keyProp, value) {
         gLineClicked[keyProp] = value
     }//END ELSE
 }//END FUNCTION 'changeLineProperty'
+
 function changeLineClicked() {
     var lines = getLines()
     var idxLine;
@@ -92,36 +125,46 @@ function changeLineClicked() {
     }
     setLineClicked(idxLine)
 }
+
 function setLineClicked(idxLine) {
     gLineClickedIdx = idxLine
     //Must to do (idxLine === null) because idxLine can also be equal to 0 (i went gLineClicked=null only if there is no index )
     gLineClicked = (idxLine === null) ? null : gMeme.lines[idxLine]
 }
-function getLineClickedIdx() {
-    return gLineClickedIdx
-}
-function getLineClicked() {
-    return gLineClicked
-}
 
-/*** Getters functions ***/
-
-function getMeme() {
-    return gMeme
-}
 function getLines() {
     return gMeme.lines
 }
 
+function getLineClickedIdx() {
+    return gLineClickedIdx
+}
 
-/** Gets item-id and items-array(objects array) and returns item with the same index  */
-function getItemById(itemId, arr) {
-    return arr.find(item => item.id === itemId)
+function getLineClicked() {
+    return gLineClicked
 }
-/**  */
-function getItemByIdx(idx, arry) {
-    return arry[idx]
+
+
+function save() {
+    const img = gCanvas.toDataURL()
+    var memes = loadMemesFromStorage()
+    if (!memes) memes = []
+    memes.push({ gMeme, img })
+    saveMemesToStorage(memes)
 }
+function saveMemesToStorage(memes) {
+    saveToStorage(KEY_MEMES, memes)
+}
+function loadMemesFromStorage() {
+    return loadFromStorage(KEY_MEMES)
+}
+function getMemes() {
+    var memes = loadMemesFromStorage()
+    if (memes) return memes
+    return []
+}
+
+
 
 function downloadMeme(elLink) {
     const data = gCanvas.toDataURL()
@@ -129,24 +172,16 @@ function downloadMeme(elLink) {
     elLink.download = 'my-meme.png'
 }
 
-
-function setImgMeme(img) {
-    gImgMeme = img
-}
-function getImgMeme() {
-    return gImgMeme
-}
-
-function createImgObj(imgIdx) {
-    if (imgIdx === -1) {
-        var img = gMeme.url
+function createImgObj(imgId) {
+    if (imgId === -1) {
+        var imgUrl = gMeme.url
     } else {
-        var imgs = getImgs()
-        var img = imgs[imgIdx]
+        var img = getImgById(imgId)
+        var imgUrl = img.url
     }
 
     var imgObj = new Image()
-    imgObj.src = img.url
+    imgObj.src = imgUrl
     setImgMeme(imgObj)
 }
 
@@ -156,29 +191,4 @@ function setCanvasSizeByImg(imgObj) {
     //Determines the height of the canvas according to the aspect ratio of the image
     var heightCanvas = imgObj.height + (canvasSize.width - imgObj.width) * ratio;
     setCanvasSize(canvasSize.width, heightCanvas)
-}
-
-function saveMemeToStorage() {
-    saveToStorage(keyMeme, gMeme)
-}
-function saveImgMemeToStorage() {
-    saveToStorage(keyImgMeme, gImgMeme.src)
-}
-
-function loadMemeFromStorage() {
-    var meme = loadFromStorage(keyMeme)
-    if (!meme) return null
-    gMeme = meme
-    setLineClicked(0)
-    return meme
-}
-
-function loadImgMemeFromStorage() {
-    gImgMeme = loadFromStorage(keyImgMeme)
-    return getImgMeme
-}
-
-function save() {
-    saveMemeToStorage()
-    saveImgMemeToStorage()
 }

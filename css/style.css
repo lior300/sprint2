@@ -91,8 +91,8 @@ main {
   font-size: medium;
 }
 
-.btn-upload{
-  padding: 10px ;
+.btn-upload {
+  padding: 10px;
   font-weight: bold;
   background-color: darkgreen;
   color: white;
@@ -131,10 +131,10 @@ main {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-  cursor: pointer;
 }
 .img-gallery-box {
   margin: 5px;
+  cursor: pointer;
 }
 .img-gallery-box img {
   max-width: 200px;
@@ -242,16 +242,6 @@ main {
   border-radius: 5px;
 }
 
-/* HELPERS */
-.hidden {
-  display: none;
-}
-.icon-background {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 80%;
-}
-
 .download {
   display: flex;
   align-items: center;
@@ -288,6 +278,48 @@ main {
   box-shadow: inset 0 0 20px 20px rgb(8, 128, 28);
   color: white;
 }
+.memes-gallery{
+  padding: 10px;
+font-size: xx-large
+}
+.meme-gallery-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  cursor: pointer;
+  margin-block-end: 10px;
+}
+.meme-gallery-box .btn-meme-delete{
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  background: url(../img/icons/delete.png);
+  align-self: flex-end;
+  background-color: firebrick;
+  width: 40px;
+  height: 40px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 80%;
+
+}
+.meme-gallery-box .img-meme {
+  width: 200px;
+  font-size: large;
+}
+
+/* HELPERS */
+.hidden {
+  display: none;
+}
+.icon-background {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 80%;
+}
+
 @media (max-width: 930px) {
   .meme-creator {
     flex-direction: column-reverse;

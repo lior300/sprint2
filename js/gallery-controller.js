@@ -8,10 +8,10 @@ function renderGallery(imgs = getImgs()) {
     elGallery.innerHTML = imgsHTMLs.join('')
 }
 /**Helpers Gallery render function */
-function getImgsHTMLs(img, idx) {
+function getImgsHTMLs(img) {
     return `
     <div class="img-gallery-box">
-        <img src="${img.url}" alt="img-gallery" onclick="onImgGallery(${idx})"/>
+        <img src="${img.url}" alt="img-gallery" onclick="onImgGallery(${img.id})"/>
     </div>`
 }
 
@@ -20,9 +20,9 @@ function onImgGallery(imgIdx) {
     createImgObj(imgIdx)
     setCanvasSizeByImg(getImgMeme())
     createMeme(imgIdx)
-    unDisableBtn(".btn-gallery")
-    disableBtn('.btn-memes')
-    changeScreen()
+    unDisableBtn(BTN_GALLERY)
+    disableBtn(BTN_CREATOR)
+    changeScreen(CREATOR)
     renderCanvas()
     renderLine()
 }

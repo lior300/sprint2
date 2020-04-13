@@ -276,41 +276,46 @@ var gRowIdxMouseOn;
 var gIsMouseOnTxt
 var gMouseDownPos;
 function onCanvasMove(ev) {
-    var elCanvas = document.querySelector('.canvas')
-    var lines = getLines()
 
-
-
-    
-    var isMouseOnTxt = lines.some((line, idx) => {
-        let limit = line.limit
-        if ((limit.left < ev.offsetX && limit.right - 7 > ev.offsetX)
-            && (limit.top < ev.offsetY && limit.bottom - 7 > ev.offsetY)) {
-            gRowIdxMouseOn = idx
-            return true
-        } else return false
-    })
-    if (isMouseOnTxt) {
-        elCanvas.style.cursor = 'pointer'
-        gIsMouseOnTxt = true
+    if (gIsMouseDown && gIsMouseOnTxt) {
+        var currPos = ev
+        var line = getLineClicked()
+        line.pos.x += currPos.offsetX - line.pos.x
+        line.pos.y += currPos.offsetY - line.pos.y
+        alignCenterLinePos(line)
+        renderCanvas()
     } else {
-        elCanvas.style.cursor = 'default'
-        gIsMouseOnTxt = false
-    }
+        var lines = getLines()
+        var isMouseOnTxt = lines.some((line, idx) => {
+            let limit = line.limit
+            if ((limit.left < ev.offsetX && limit.right - 7 > ev.offsetX)
+                && (limit.top < ev.offsetY && limit.bottom - 7 > ev.offsetY)) {
+                gRowIdxMouseOn = idx
+                return true
+            } else return false
+        })
 
+        var elCanvas = document.querySelector('.canvas')
+        if (isMouseOnTxt) {
+            elCanvas.style.cursor = 'pointer'
+            gIsMouseOnTxt = true
+        } else {
+            elCanvas.style.cursor = 'default'
+            gIsMouseOnTxt = false
+        }
+    }
 }
 function onCanvasUp(ev) {
     gIsMouseDown = false;
 }
 function onCanvasDown(ev) {
-    console.log('wok');
-
     gIsMouseDown = true;
+
     if (gIsMouseOnTxt) {
         setLineClicked(gRowIdxMouseOn)
         renderCanvas()
         renderLine()
-        console.log(gLineClicked);
+        gMouseDownPos = ev
     }
 }
 

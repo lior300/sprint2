@@ -16,11 +16,13 @@ var gImgMeme;
 /**Create new meme */
 function createMeme(imgId) {
     gMeme = {}
-
     gMeme.selectedImgId = imgId
     if (imgId === -1) {
         gMeme.url = gImgMeme.src
-    } else gMeme.url = gImgs[imgId].url
+    } else {
+        var imgIdx = getImgIdxById(imgId)
+        gMeme.url = gImgs[imgIdx].url
+    }
 
     gMeme.lines = []
 

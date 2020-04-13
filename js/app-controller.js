@@ -29,7 +29,7 @@ function init() {
 function InitializeCanvas() {
     gCanvas = document.querySelector('#my-canvas');
     gCtx = gCanvas.getContext('2d')
-    setCanvasSize(700, 700)
+    setCanvasSize(500, 500)
 
 }
 function setCanvasSize(width, height) {
@@ -40,29 +40,34 @@ function setCanvasSize(width, height) {
 function renderCanvas() {
     var meme = getMeme()
     var imgObj = getImgMeme()
-    console.log(imgObj);
-
     gCtx.drawImage(imgObj, 0, 0, gCanvas.width, gCanvas.height)
+    meme.lines.forEach(setLineArea)
     if (!gIsDownload) renderLineMarker()
     meme.lines.forEach(renderLineCanvas)
 }
 
+
+
+function setContextProperties(line) {
+    gCtx.font = `${line.size}px ${line.font}`;
+    gCtx.textAlign = 'left';
+    gCtx.textBaseline = 'top';
+    gCtx.lineWidth = 4;
+    gCtx.strokeStyle = line.stroke;
+    gCtx.fillStyle = line.color;
+}
 /**Helpers for 'renderCanvas()' function */
 function renderLineCanvas(line) {
-    // Render canvas 
-    gCtx.font = `${line.size}px ${line.font}`;
-    gCtx.textAlign = line.align;
-    gCtx.lineWidth = 4
-    gCtx.strokeStyle = line.stroke
+    setContextProperties(line);
     gCtx.strokeText(line.txt, line.pos.x, line.pos.y);
-    gCtx.fillStyle = line.color;
     gCtx.fillText(line.txt, line.pos.x, line.pos.y);
 }
 function renderLineMarker() {
     var line = getLineClicked()
     if (!line) return
+    setContextProperties(line)
     gCtx.fillStyle = 'rgba(220, 220, 220, 0.6)';
-    gCtx.fillRect(0, line.pos.y - line.size + 2, gCanvas.width, line.size + 10);
+    gCtx.fillRect(line.limit.left, line.limit.top, line.limit.right - line.pos.x, line.limit.bottom - line.pos.y);
 }
 
 
@@ -185,7 +190,6 @@ function onDeleteLine(idxLine) {
 }
 function onChange() {
     if (!getLineClicked()) return
-
     changeLineClicked()
     renderLine()
     renderCanvas()
@@ -264,3 +268,49 @@ function onDownload(elLink) {
 function onFacebookShare() {
 
 }
+
+
+
+var gIsMouseDown;
+var gRowIdxMouseOn;
+var gIsMouseOnTxt
+var gMouseDownPos;
+function onCanvasMove(ev) {
+    var elCanvas = document.querySelector('.canvas')
+    var lines = getLines()
+
+
+
+    
+    var isMouseOnTxt = lines.some((line, idx) => {
+        let limit = line.limit
+        if ((limit.left < ev.offsetX && limit.right - 7 > ev.offsetX)
+            && (limit.top < ev.offsetY && limit.bottom - 7 > ev.offsetY)) {
+            gRowIdxMouseOn = idx
+            return true
+        } else return false
+    })
+    if (isMouseOnTxt) {
+        elCanvas.style.cursor = 'pointer'
+        gIsMouseOnTxt = true
+    } else {
+        elCanvas.style.cursor = 'default'
+        gIsMouseOnTxt = false
+    }
+
+}
+function onCanvasUp(ev) {
+    gIsMouseDown = false;
+}
+function onCanvasDown(ev) {
+    console.log('wok');
+
+    gIsMouseDown = true;
+    if (gIsMouseOnTxt) {
+        setLineClicked(gRowIdxMouseOn)
+        renderCanvas()
+        renderLine()
+        console.log(gLineClicked);
+    }
+}
+

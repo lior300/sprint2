@@ -29,18 +29,67 @@ function createMeme(imgId) {
     //Set line position coordinates
     var linePos = {
         x: canvasSize.width / 2,
-        y: 50
+        y: 30
     }
     addLine(linePos.x, linePos.y)
 
     //Add another line
     linePos = {
         x: canvasSize.width / 2,
-        y: canvasSize.height - 10
+        y: canvasSize.height - 30
     }
     addLine(linePos.x, linePos.y)
     setLineClicked(0)
 }
+
+function addLine(xPos, yPos) {
+    var canvasSize = getCanvasSize()
+
+    if (!xPos) xPos = canvasSize.width / 2
+    if (!yPos) yPos = canvasSize.height / 2
+
+
+    /*Default properties line*/
+    var newLine = {
+        txt: 'Enter text',
+        font: 'Impact',
+        size: 50, align: 'center',
+        stroke: 'black',
+        color: 'white',
+        pos: {
+            x: xPos,
+            y: yPos
+        }
+    }
+    alignCenterLinePos(newLine)
+
+    gMeme.lines.push(newLine)
+}
+function alignCenterLinePos(line) {
+    setContextProperties(line)
+    //Align line to center
+    var lineWidth = gCtx.measureText(line.txt).width
+    line.pos.x = line.pos.x - lineWidth / 2
+    line.pos.y = line.pos.y - line.size / 2
+}
+function setLineArea(line) {
+    gCtx.font = `${line.size}px ${line.font}`;
+
+    var padding = 7
+    line.limit = {
+        top: line.pos.y - padding,
+        left: line.pos.x - padding,
+        right: line.pos.x + gCtx.measureText(line.txt).width + padding * 2,
+        bottom: line.pos.y + line.size + padding * 2
+    };
+}
+
+function deleteLine(idxLine) {
+    var linesMeme = getLines()
+    linesMeme.splice(idxLine, 1)
+    changeLineClicked()
+}
+
 
 function getMeme() {
     return gMeme
@@ -69,34 +118,6 @@ function loadMemeFromStorage() {
     gMeme = meme
     setLineClicked(0)
     return meme
-}
-
-
-function addLine(xPos, yPos) {
-    var canvasSize = getCanvasSize()
-
-    if (!xPos) xPos = canvasSize.width / 2
-    if (!yPos) yPos = canvasSize.height / 2
-
-    /*Default properties line*/
-    var newLine = {
-        txt: 'Enter text',
-        font: 'Impact',
-        size: 50, align: 'center',
-        stroke: 'black',
-        color: 'white',
-        pos: {
-            x: xPos,
-            y: yPos
-        }
-    }
-    gMeme.lines.push(newLine)
-}
-
-function deleteLine(idxLine) {
-    var linesMeme = getLines()
-    linesMeme.splice(idxLine, 1)
-    changeLineClicked()
 }
 
 function changeLineProperty(keyProp, value) {

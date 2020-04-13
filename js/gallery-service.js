@@ -18,8 +18,8 @@ var gImgs = [
     { id: 14, url: 'img/meme-imgs-full-size/14.jpg', keywords: ['president', 'donald trump', 'men'] },
     { id: 15, url: 'img/meme-imgs-full-size/15.jpg', keywords: ['baby,cute'] },
     { id: 16, url: 'img/meme-imgs-full-size/16.jpg', keywords: ['animals', 'dog'] },
-    { id: 18, url: 'img/meme-imgs-full-size/17.jpg', keywords: ['smile', 'bark obama', 'laughs', 'happy'] },
-    { id: 19, url: 'img/meme-imgs-full-size/18.jpg', keywords: ['kiss', 'men', 'man', 'friends'] },
+    { id: 17, url: 'img/meme-imgs-full-size/17.jpg', keywords: ['smile', 'bark obama', 'laughs', 'happy'] },
+    { id: 18, url: 'img/meme-imgs-full-size/18.jpg', keywords: ['kiss', 'men', 'man', 'friends'] },
 ]
 
 
